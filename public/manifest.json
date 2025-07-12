@@ -15,7 +15,7 @@
     }
   ],
   "background": {
-    "service_worker": "/src/background.js"
+    "service_worker": "src/background.js"
   },
   "side_panel": {
     "default_path": "src/sidepanel.html"
