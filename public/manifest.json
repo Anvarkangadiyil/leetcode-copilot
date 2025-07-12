@@ -3,10 +3,11 @@
   "name": "LeetCode AI Assistant",
   "version": "1.0",
   "description": "AI code assistant for LeetCode",
-  "permissions": ["tabs", "scripting"],
+  "permissions": ["scripting", "tabs", "windows","sidePanel"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "default_title": "Click to open panel"
   },
   "content_scripts": [
     {
@@ -14,6 +15,7 @@
       "js": ["src/content.js"]
     }
   ],
+  
   "background": {
     "service_worker": "src/background.js"
   },
