@@ -4,7 +4,7 @@ chrome.runtime.onInstalled.addListener(() => {
 })
 
 // Optional: log when a tab is updated
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener((_, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url?.includes("leetcode.com")) {
     console.log("🧠 LeetCode page loaded")
   }
