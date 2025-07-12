@@ -1,21 +1,22 @@
-// // content.ts
-// console.log("Content script loaded");
+// content.ts
+console.log("✅ LeetCode AI Assistant content script loaded")
 
-// // Example: inject a floating button to open the side panel
-// const btn = document.createElement("button");
-// btn.innerText = "Open Side Panel";
-// btn.style.position = "fixed";
-// btn.style.top = "20px";
-// btn.style.right = "20px";
-// btn.style.zIndex = "1000";
-// btn.style.padding = "10px";
-// btn.style.background = "#6200ee";
-// btn.style.color = "white";
-// btn.style.border = "none";
-// btn.style.borderRadius = "5px";
+// Example: Inject a floating button
+const button = document.createElement("button")
+button.innerText = "Open Side Panel"
+button.style.position = "fixed"
+button.style.bottom = "20px"
+button.style.right = "20px"
+button.style.padding = "10px 16px"
+button.style.zIndex = "9999"
+button.style.backgroundColor = "#0f172a"
+button.style.color = "white"
+button.style.borderRadius = "8px"
+button.style.border = "none"
+button.style.cursor = "pointer"
 
-// btn.onclick = () => {
-//   chrome.runtime.sendMessage({ type: "openSidebarWindow" });
-// };
+button.onclick = () => {
+  alert("To open the AI side panel, click your extension icon and choose 'Show Side Panel'.")
+}
 
-// document.body.appendChild(btn);
+document.body.appendChild(button)
