@@ -1,14 +1,11 @@
+// background.ts
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: 'openSidePanel',
-    title: 'Open side panel',
-    contexts: ['all']
-  });
-});
+  console.log("✅ Extension installed")
+})
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'openSidePanel') {
-    // This will open the panel in all the pages on the current window.
-    chrome.sidePanel.open({ windowId: tab!.windowId });
+// Optional: log when a tab is updated
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete" && tab.url?.includes("leetcode.com")) {
+    console.log("🧠 LeetCode page loaded")
   }
-});
+})

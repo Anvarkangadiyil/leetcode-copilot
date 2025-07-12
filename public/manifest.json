@@ -3,23 +3,32 @@
   "name": "LeetCode AI Assistant",
   "version": "1.0",
   "description": "AI code assistant for LeetCode",
-  "permissions": ["scripting", "tabs", "windows","sidePanel"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": ["sidePanel"],
+  "host_permissions": ["https://leetcode.com/*"],
   "action": {
-    "default_popup": "index.html",
-    "default_title": "Click to open panel"
+    "default_title": "LeetCode AI Assistant"
+  },
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
       "matches": ["https://leetcode.com/*"],
-      "js": ["src/content.js"]
+      "js": ["content.js"]
     }
   ],
-  
-  "background": {
-    "service_worker": "src/background.js"
-  },
   "side_panel": {
-    "default_path": "src/sidepanel.html"
+    "default_path": "sidepanel.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }
