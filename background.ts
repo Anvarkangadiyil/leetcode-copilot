@@ -10,17 +10,17 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 });
 
-chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
-  console.log('Message received in service worker:', message);
-  // if (message.action === "open_side_panel") {
-  //   chrome.sidePanel
-  //     .setOptions({
-  //       tabId: sender.tab?.id,
-  //       path: "sidepanel.html",
-  //       enabled: true,
-  //     })
-  //     .then(() => {
-  //       chrome.sidePanel.open({ tabId: sender.tab?.id! });
-  //     });
-  // }
+chrome.runtime.onMessage.addListener((message, sender, _sendResponse) => {
+  
+  if (message.action === "open_side_panel") {
+    chrome.sidePanel
+      .setOptions({
+        tabId: sender.tab?.id,
+        path: "sidepanel.html",
+        enabled: true,
+      })
+      .then(() => {
+        chrome.sidePanel.open({ tabId: sender.tab?.id! });
+      });
+  }
 });
