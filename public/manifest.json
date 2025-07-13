@@ -3,7 +3,7 @@
   "name": "LeetCode AI Assistant",
   "version": "1.0",
   "description": "AI code assistant for LeetCode",
-  "permissions": ["sidePanel"],
+  "permissions": ["sidePanel","scripting","activeTab"],
   "host_permissions": ["https://leetcode.com/*"],
   "action": {
     "default_title": "LeetCode AI Assistant"

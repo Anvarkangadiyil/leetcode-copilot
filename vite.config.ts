@@ -10,7 +10,7 @@ export default defineConfig({
       input: {
         popup: resolve(__dirname, "index.html"),                // optional if you have popup.html
         sidepanel: resolve(__dirname, "sidepanel.html"),
-        background: resolve(__dirname, "src/background.ts"),
+        background: resolve(__dirname, "background.ts"),
         content: resolve(__dirname, "src/content.ts")
       },
       output: {

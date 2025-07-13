@@ -23,7 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
+  "include": ["src", "background.ts"],
   "baseUrl": ".",
   "paths": {
     "@/*": ["./src/*"]
