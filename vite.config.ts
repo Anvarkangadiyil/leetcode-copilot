@@ -14,12 +14,12 @@ export default defineConfig({
         content: resolve(__dirname, "src/content.ts")
       },
       output: {
-        entryFileNames: "[name].js" // Output to dist/background.js, dist/content.js, etc.
+        entryFileNames: "[name].js" 
       }
     },
     outDir: "dist",
     emptyOutDir: true,
-    target: "esnext", // Ensures modern JS support
+    target: "esnext", 
     sourcemap: false
   },
   resolve: {

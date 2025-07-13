@@ -19,8 +19,15 @@ if (!document.getElementById('my-ai-btn')) {
   });
 
   btn.onclick = () => {
-
+     try{
      chrome.runtime.sendMessage({ action: 'open_side_panel' });
+     }catch(e){
+       // reinject script
+       const script = document.createElement('script');
+       script.src = chrome.runtime.getURL('background.js');
+       document.body.appendChild(script);
+
+     }
  
   };
 
