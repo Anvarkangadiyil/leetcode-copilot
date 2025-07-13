@@ -16,7 +16,11 @@ button.style.border = "none"
 button.style.cursor = "pointer"
 
 button.onclick = () => {
-  alert("To open the AI side panel, click your extension icon and choose 'Show Side Panel'.")
+ chrome.runtime.sendMessage('get-user-data', (response) => {
+  // 3. Got an asynchronous response with the data from the service worker
+  console.log('received user data', response);
+  
+});
 }
 
 document.body.appendChild(button)
