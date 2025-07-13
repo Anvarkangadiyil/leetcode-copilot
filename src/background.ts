@@ -21,7 +21,7 @@ chrome.action.onClicked.addListener(() => {
   chrome.sidePanel.open({ tabId: parseInt(chrome.runtime.id) });
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
   // 2. A page requested user data, respond with a copy of `user`
   if (message === "get-user-data") {
     chrome.sidePanel.open({ tabId: parseInt(chrome.runtime.id) });
