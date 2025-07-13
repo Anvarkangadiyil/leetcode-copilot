@@ -1,26 +1,11 @@
-chrome.runtime.onInstalled.addListener(async () => {
-  // Re-inject the content script into all active tabs
-  for (const cs of chrome.runtime.getManifest().content_scripts!) {
-    for (const tab of await chrome.tabs.query({ url: cs.matches })) {
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id! },
-        files: [cs.js?.toString() ?? ""],
-      });
-    }
+chrome.runtime.onMessage.addListener((message, sender) => {
+  if (message.action === 'open_side_panel') {
+    // Open the side panel for the current tab that sent the message
+    chrome.sidePanel.open({ tabId: sender.tab?.id! }); //
   }
 });
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }) //
+  .catch((error) => console.error(error)); //
 
-chrome.runtime.onMessage.addListener((message, sender, _sendResponse) => {
-  
-  if (message.action === "open_side_panel") {
-    chrome.sidePanel
-      .setOptions({
-        tabId: sender.tab?.id,
-        path: "sidepanel.html",
-        enabled: true,
-      })
-      .then(() => {
-        chrome.sidePanel.open({ tabId: sender.tab?.id! });
-      });
-  }
-});
+
+

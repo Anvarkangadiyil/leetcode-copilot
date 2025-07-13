@@ -22,7 +22,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["assets/*"],
+      "resources": ["assets/*", "sidepanel.html"],
       "matches": ["<all_urls>"]
     }
   ]
