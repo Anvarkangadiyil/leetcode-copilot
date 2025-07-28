@@ -1,19 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "LeetCode AI Assistant",
+  "name": "Leet Code Copilot",
   "version": "1.0",
   "description": "AI code assistant for LeetCode",
-  "permissions": ["sidePanel","scripting","activeTab"],
+  "permissions": ["sidePanel", "scripting", "activeTab","storage"],
   "host_permissions": ["https://leetcode.com/*"],
   "action": {
-    "default_title": "LeetCode AI Assistant"
+    "default_title": "LeetCode AI Assistant",
+    "default_popup": "index.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"  
   },
   "content_scripts": [
     {
-      "matches": ["https://leetcode.com/*"],
+      "matches": ["https://leetcode.com/problems/*"],
       "js": ["content.js"]
     }
   ],
@@ -25,5 +27,9 @@
       "resources": ["assets/*", "sidepanel.html"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  }
 }

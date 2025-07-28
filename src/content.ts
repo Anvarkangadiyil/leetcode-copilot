@@ -2,7 +2,7 @@
 if (!document.getElementById('my-ai-btn')) {
   const btn = document.createElement('button');
   btn.id = 'my-ai-btn';
-  btn.innerText = '🧠 AI';
+  btn.innerText = '💡 Copilot';
  
 
   Object.assign(btn.style, {
@@ -20,7 +20,7 @@ if (!document.getElementById('my-ai-btn')) {
 
   btn.onclick = () => {
      try{
-     chrome.runtime.sendMessage({ action: 'open_side_panel' });
+     chrome.runtime.sendMessage({ action: 'openSidePanel' });
      }catch(e){
        // reinject script
        const script = document.createElement('script');
