@@ -1,7 +1,7 @@
 
 export interface Message {
   id: string;
-  name: "bot" | "user";
+  name: "model" | "user";
   message: string;
   timestamp: string;
   status?: "sending" | "sent" | "error";

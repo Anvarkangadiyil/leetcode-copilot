@@ -9,7 +9,7 @@ interface MessageBubbleProps {
 
 export const MessageBubble = ({ chat }: MessageBubbleProps) => {
   const isUser = chat.name === "user";
-  const isBot = chat.name === "bot";
+  const isBot = chat.name === "model";
 
   return (
     <div className="w-full px-2 sm:px-4 lg:px-6 py-2">
@@ -51,7 +51,7 @@ export const MessageBubble = ({ chat }: MessageBubbleProps) => {
                 }`}>
                 <ReactMarkdown 
                   components={{
-                    // Enhanced code blocks with syntax highlighting
+                  
                     pre: ({ children, ...props }) => (
                       <pre 
                         {...props} 
@@ -65,7 +65,7 @@ export const MessageBubble = ({ chat }: MessageBubbleProps) => {
                       </pre>
                     ),
                     
-                    // Inline and block code styling
+          
                     code: ({ children, className, ...props }) => {
                       const isInline = !className?.includes('language-');
                       return isInline ? (
@@ -86,14 +86,12 @@ export const MessageBubble = ({ chat }: MessageBubbleProps) => {
                       );
                     },
                     
-                    // Enhanced paragraph styling
                     p: ({ children, ...props }) => (
                       <p {...props} className="break-words overflow-wrap-anywhere leading-relaxed mb-2 last:mb-0">
                         {children}
                       </p>
                     ),
                     
-                    // Enhanced list styling
                     ul: ({ children, ...props }) => (
                       <ul {...props} className="space-y-1 ml-4">
                         {children}
