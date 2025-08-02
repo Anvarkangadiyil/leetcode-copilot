@@ -1,5 +1,4 @@
 
-// types.ts
 export interface Message {
   id: string;
   name: "bot" | "user";

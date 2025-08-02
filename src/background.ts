@@ -1,4 +1,4 @@
-// background.ts
+
 import { supabase, initializeSupabaseClient } from "./helper/supabase-client";
 
 // Initialize on startup
@@ -12,10 +12,10 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action === "signUp") {
-    const { email, password } = message.payload;
+    const { email, password,name} = message.payload;
 
     supabase.auth
-      .signUp({ email, password })
+      .signUp({ email, password, options: { data: { name } } })
       .then(({ data, error }) => {
         sendResponse({ data, error });
       })

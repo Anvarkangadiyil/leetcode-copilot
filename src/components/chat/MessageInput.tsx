@@ -1,7 +1,7 @@
-// MessageInput.tsx
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+
 import { Send, Loader2 } from "lucide-react";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface MessageInputProps {
   inputValue: string;

@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { GoogleGenAI } from "@google/genai";
 import { supabase } from "@/helper/supabase-client";
-
-import { MessageList } from "./MessageList";
-import { MessageInput } from "./MessageInput";
 import { LoadingScreen } from "./LoadingScreen";
 import { LoginPrompt } from "./LoginPrompt";
-import { SettingsModal } from "./SettingsModel";
-import { Header } from "./Header";
+import { Header } from "./chat/Header";
+import { MessageList } from "./chat/MessageList";
+import { MessageInput } from "./chat/MessageInput";
+import { SettingsModal } from "./settings/SettingsModel";
+
+
 
 
 const SidePanel = () => {
@@ -71,12 +72,13 @@ const SidePanel = () => {
       const ai = new GoogleGenAI({
         apiKey: settings.geminiApiKey,
       });
-
+   
       const response = await ai.models.generateContentStream({
         model: "gemini-2.5-flash",
         contents: inputValue,
         config: {
           temperature: settings.temperature,
+          
         },
       });
 

@@ -1,4 +1,4 @@
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Settings, X } from "lucide-react";
 
 import type { Settings as SettingsType } from "@/types/type";

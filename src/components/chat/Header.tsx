@@ -1,5 +1,6 @@
-import { Button } from "./ui/button";
+
 import { Bot, Settings, LogOut } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface HeaderProps {
   onSettingsClick: () => void;
@@ -22,7 +23,7 @@ export const Header = ({ onSettingsClick, onLogoutClick }: HeaderProps) => {
           onClick={onSettingsClick}
           size="sm"
           variant="ghost"
-          className="p-2 hover:bg-gray-700 text-gray-300"
+          className="p-2 hover:bg-gray-700 text-gray-300 hover:text-white"
         >
           <Settings className="w-4 h-4" />
         </Button>
@@ -30,7 +31,7 @@ export const Header = ({ onSettingsClick, onLogoutClick }: HeaderProps) => {
           onClick={onLogoutClick}
           size="sm"
           variant="ghost"
-          className="p-2 hover:bg-gray-700 text-gray-300"
+          className="p-2 hover:bg-gray-700 text-gray-300 hover:text-white"
         >
           <LogOut className="w-4 h-4" />
         </Button>

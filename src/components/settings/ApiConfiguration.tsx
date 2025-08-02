@@ -1,6 +1,6 @@
 
 import type { Settings } from "@/types/type";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { Key, Eye, EyeOff } from "lucide-react";
 
 
