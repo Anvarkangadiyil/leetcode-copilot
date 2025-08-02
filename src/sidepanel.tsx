@@ -1,11 +1,11 @@
-
+import { lazy } from 'react';
 import ReactDOM from 'react-dom/client'
-import SidePanel from './components/SidePanel'
 import "./index.css";
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Home from './pages/Home';
+const Home = lazy(() => import('./pages/Home'));
+const SidePanel = lazy(() => import('./components/SidePanel'));
 
 ReactDOM.createRoot(document.getElementById('root')!).render( 
     <MemoryRouter>
