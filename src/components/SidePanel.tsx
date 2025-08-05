@@ -11,6 +11,7 @@ import { MessageList } from "./chat/MessageList";
 import { MessageInput } from "./chat/MessageInput";
 import { SettingsModal } from "./settings/SettingsModel";
 import { dbPromise } from "@/lib/indexedDB";
+import { SYSTEM_PROMPT } from "@/utils/prompts";
 
 
 
@@ -99,7 +100,7 @@ const SidePanel = () => {
       const chat = ai.chats.create({
         model: "gemini-2.5-flash",
         config: {
-          systemInstruction: "You are a helpful assistant for LeetCode problems.",
+          systemInstruction:SYSTEM_PROMPT,
         },
         history: geminiHistory,
       });
