@@ -1,5 +1,5 @@
-
 import { supabase, initializeSupabaseClient } from "./helper/supabase-client";
+import { questionDbPromise } from "./lib/indexedDB";
 
 // Initialize on startup
 chrome.runtime.onStartup.addListener(async () => {
@@ -11,8 +11,22 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  
+  if (message.action === "SAVE_PROBLEM") {
+    questionDbPromise.then(async (db) => {
+      const tx = db.transaction("questions", "readwrite");
+      await tx.store.put(message.payload); // keyPath is "id" = "currentQ"
+      console.log("Saved current problem:", message.payload);
+
+      // notify side panel to refresh
+      chrome.runtime.sendMessage({ action: "UPDATE_Q" });
+    });
+    sendResponse({ status: "ok" });
+    return true;
+  }
+
   if (message.action === "signUp") {
-    const { email, password,name} = message.payload;
+    const { email, password, name } = message.payload;
 
     supabase.auth
       .signUp({ email, password, options: { data: { name } } })
@@ -69,6 +83,16 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.action == "openSidePanel") {
     chrome.sidePanel.open({ tabId: _sender.tab?.id! }, () => {
       console.log("Side Panel Opened");
+    });
+  }
+  if (message.action == "getProblem") {
+    questionDbPromise.then(async (db) => {
+      const tabUrl = _sender.tab?.url;
+      if (tabUrl) {
+        const data = await db.get("questions", tabUrl);
+        console.log(data);
+        sendResponse({ problemName: data?.name, error: null });
+      }
     });
   }
 });

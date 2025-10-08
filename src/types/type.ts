@@ -16,3 +16,14 @@ export interface Settings {
   temperature: number;
   maxTokens: number;
 }
+
+
+export interface QuestionInformation{
+  id: string;
+  description: string;
+  name: string;
+  answer: string;
+  programmingLanguage: string;
+  
+
+}

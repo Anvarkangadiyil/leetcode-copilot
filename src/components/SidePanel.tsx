@@ -1,4 +1,4 @@
-import type { Message, Settings } from "@/types/type";
+import type { Message, QuestionInformation, Settings } from "@/types/type";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -10,11 +10,8 @@ import { Header } from "./chat/Header";
 import { MessageList } from "./chat/MessageList";
 import { MessageInput } from "./chat/MessageInput";
 import { SettingsModal } from "./settings/SettingsModel";
-import { dbPromise } from "@/lib/indexedDB";
 import { SYSTEM_PROMPT } from "@/utils/prompts";
-
-
-
+import { dbPromise, questionDbPromise } from "@/lib/indexedDB";
 
 const SidePanel = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -23,6 +20,7 @@ const SidePanel = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [problem, setProblem] = useState("");
   const [settings, setSettings] = useState<Settings>({
     notifications: true,
     soundEnabled: true,
@@ -35,30 +33,81 @@ const SidePanel = () => {
   const [showApiKey, setShowApiKey] = useState(false);
   const navigate = useNavigate();
 
+  const [qInformation, setQInformation] = useState<QuestionInformation | null>(
+    null
+  );
+
   useEffect(() => {
     const loadDb = async () => {
-      const indexDB = await dbPromise;
-      const chatHistory = await indexDB.get("chats", "twosum");
-      if (chatHistory) {
-        setMessages(chatHistory.chatHistory);
-      } else {
-        const welcomeMessage: Message = {
-          id: "welcome",
-          name: "model",
-          message: settings.geminiApiKey
-            ? "Hello! I'm your Leet code companion powered. How can I help you today?"
-            : "Hello! I'm your Leet code companion. How can I help you today? \n\n💡 **Tip:** Make sure to add your Gemini API key in settings to get started!",
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-        setMessages([welcomeMessage]);
+      try {
+        const indexDB = await dbPromise;
+        const qIndexDB = await questionDbPromise;
+
+        // First, get the current question
+        const currentQ: QuestionInformation | undefined = await qIndexDB.get(
+          "questions",
+          "currentQ"
+        );
+
+        let currentProblem = problem;
+
+        if (currentQ) {
+          setProblem(currentQ.name);
+          setQInformation(currentQ);
+          currentProblem = currentQ.name;
+        }
+
+        if (currentProblem) {
+          const chatHistory = await indexDB.get("chats", currentProblem);
+          if (chatHistory) {
+            setMessages(chatHistory.chatHistory);
+          } else {
+            const welcomeMessage: Message = {
+              id: "welcome",
+              name: "model",
+              message: settings.geminiApiKey
+                ? "Hello! I'm your Leet code companion powered. How can I help you today? "
+                : "Hello! I'm your Leet code companion. How can I help you today? \n\n💡 **Tip:** Make sure to add your Gemini API key in settings to get started!" +
+                  "\n\n👉 **Settings** -> **API Configuration**",
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+            setMessages([welcomeMessage]);
+          }
+        } else {
+          // No current problem, show welcome message
+          const welcomeMessage: Message = {
+            id: "welcome",
+            name: "model",
+            message: settings.geminiApiKey
+              ? "Hello! I'm your Leet code companion powered. How can I help you today? "
+              : "Hello! I'm your Leet code companion. How can I help you today? \n\n💡 **Tip:** Make sure to add your Gemini API key in settings to get started!" +
+                "\n\n👉 **Settings** -> **API Configuration**",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMessages([welcomeMessage]);
+        }
+      } catch (error) {
+        console.error("Error loading data from IndexedDB:", error);
       }
     };
 
     loadDb();
-  }, []);
+
+    const listener = (message: any) => {
+      if (message.action === "UPDATE_Q") {
+        loadDb();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
+  }, [settings.geminiApiKey]);
 
   const handleSend = async () => {
     if (!inputValue.trim() || isSending) return;
@@ -76,7 +125,7 @@ const SidePanel = () => {
 
     const updatedMessagesWithUser = [...messages, newMessage];
     setMessages(updatedMessagesWithUser);
-    
+
     const currentMessage = inputValue;
     setInputValue("");
     setIsSending(true);
@@ -85,28 +134,30 @@ const SidePanel = () => {
       const ai = new GoogleGenAI({
         apiKey: settings.geminiApiKey,
       });
-      
-      const db = await dbPromise;
-      const chats = await db.get("chats", "twosum");
 
-     
+      const db = await dbPromise;
+      const chats = await db.get("chats", problem);
+
       const geminiHistory = (chats?.chatHistory.slice(-10) || [])
-        .filter(msg => msg.id !== "welcome" && msg.status !== "error")
+        .filter((msg) => msg.id !== "welcome" && msg.status !== "error")
         .map((message: Message) => ({
-          role: message.name === "user" ? "user" : "model", 
+          role: message.name === "user" ? "user" : "model",
           parts: [{ text: message.message }],
         }));
 
+      //TODO: get the the problem statement and the code and the language and pass it with the prombt
       const chat = ai.chats.create({
         model: "gemini-2.5-flash",
         config: {
-          systemInstruction:SYSTEM_PROMPT,
+          systemInstruction:
+            SYSTEM_PROMPT +
+            `\n\nProblem: ${qInformation?.description}\n\nCode: ${qInformation?.answer}\n\nLanguage: ${qInformation?.programmingLanguage}`,
         },
         history: geminiHistory,
       });
 
       // Fix: Pass message directly, not as object
-      const stream = await chat.sendMessageStream({message:currentMessage});
+      const stream = await chat.sendMessageStream({ message: currentMessage });
 
       const botResponseId = (Date.now() + 1).toString();
       const initialBotResponse: Message = {
@@ -130,7 +181,6 @@ const SidePanel = () => {
 
       let accumulatedText = "";
 
-
       for await (const chunk of stream) {
         const chunkText = chunk.text ?? "";
         accumulatedText += chunkText;
@@ -144,33 +194,32 @@ const SidePanel = () => {
         );
       }
 
-   
       const finalMessages = messagesWithBotResponse.map((msg) =>
         msg.id === botResponseId
           ? { ...msg, message: accumulatedText, status: "sent" as const }
           : msg
       );
-      
-      await db.put("chats", { 
-        problemName: "twosum", 
-        chatHistory: finalMessages 
+
+      await db.put("chats", {
+        problemName: problem,
+        chatHistory: finalMessages,
       });
 
       setIsSending(false);
     } catch (error) {
       console.error("Streaming error:", error);
-      
+
       const errorMessages = updatedMessagesWithUser.map((msg) =>
         msg.id === newMessage.id ? { ...msg, status: "error" as const } : msg
       );
       setMessages(errorMessages);
-    
+
       const db = await dbPromise;
-      await db.put("chats", { 
-        problemName: "twosum", 
-        chatHistory: errorMessages 
+      await db.put("chats", {
+        problemName: problem,
+        chatHistory: errorMessages,
       });
-      
+
       setIsSending(false);
     }
   };
@@ -267,6 +316,7 @@ const SidePanel = () => {
       <Header
         onSettingsClick={() => setShowSettings(true)}
         onLogoutClick={handleLogout}
+        currentProblem={problem}
       />
 
       <MessageList messages={messages} isSending={isSending} />

@@ -3,7 +3,7 @@
   "name": "Leet Code Copilot",
   "version": "1.0",
   "description": "AI code assistant for LeetCode",
-  "permissions": ["sidePanel", "scripting", "activeTab","storage"],
+  "permissions": ["sidePanel", "scripting", "activeTab","storage", "nativeMessaging"],
   "host_permissions": ["https://leetcode.com/*"],
   "action": {
     "default_title": "LeetCode AI Assistant",
