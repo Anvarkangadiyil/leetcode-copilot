@@ -1,6 +1,10 @@
-// MessageBubble.tsx
-import { Bot, User, Loader2 } from "lucide-react";
-import ReactMarkdown from 'react-markdown';
+// ✅ Improved MessageBubble.tsx with Highlight.js syntax highlighting + better dark theme
+
+import { Bot, User, Loader2, Copy } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import hljs from "highlight.js";
+import "highlight.js/styles/github-dark.css"; // ✅ Modern dark theme
+import { useEffect } from "react";
 import type { Message } from "@/types/type";
 
 interface MessageBubbleProps {
@@ -10,131 +14,154 @@ interface MessageBubbleProps {
 export const MessageBubble = ({ chat }: MessageBubbleProps) => {
   const isUser = chat.name === "user";
   const isBot = chat.name === "model";
+  // const [_copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    hljs.highlightAll();
+  }, [chat.message]);
+
+  // const _handleCopy = () => {
+  //   navigator.clipboard.writeText(chat.message);
+  //   setCopied(true);
+  //   setTimeout(() => setCopied(false), 1200);
+  // };
 
   return (
     <div className="w-full px-2 sm:px-4 lg:px-6 py-2">
       <div className={`flex gap-3 w-full ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-        
-        {/* Avatar Section */}
+
+        {/* Avatar */}
         <div className="flex-shrink-0">
           <div
-            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105
-              ${isBot
-                ? "bg-gradient-to-r from-blue-500 to-purple-600"
-                : "bg-gray-600"
+            className={`w-9 h-9 rounded-full flex items-center justify-center 
+              transition-all duration-300 hover:scale-110
+              shadow-[0_0_10px_rgba(120,0,255,0.6)]
+              hover:shadow-[0_0_14px_rgba(170,80,255,0.9)]
+              ${
+                isBot
+                  ? "bg-gradient-to-br from-purple-900 via-black to-purple-950"
+                  : "bg-gradient-to-br from-black via-purple-950 to-black"
               }`}
           >
             {isBot ? (
-              <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-sm" />
+              <Bot className="w-4 h-4 text-purple-300 drop-shadow-[0_0_4px_rgba(180,80,255,0.9)]" />
             ) : (
-              <User className="w-4 h-4 sm:w-5 sm:h-5 text-white drop-shadow-sm" />
+              <User className="w-4 h-4 text-purple-300 drop-shadow-[0_0_4px_rgba(180,80,255,0.9)]" />
             )}
           </div>
         </div>
 
-        {/* Message Container */}
+        {/* Message Bubble */}
         <div className={`flex-1 min-w-0 max-w-[calc(100%-4rem)] ${isUser ? "mr-1" : "ml-1"}`}>
           <div
-            className={`relative rounded-2xl px-4 py-3 shadow-lg backdrop-blur-sm transition-all duration-200 hover:shadow-xl
-              ${isUser
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-tr-md ml-auto max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]"
-                : "bg-slate-700 border border-slate-600 text-slate-100 rounded-tl-md"
+            className={`relative rounded-2xl px-4 py-3 shadow-lg backdrop-blur-md transition-all duration-300 
+              hover:shadow-[0_0_16px_rgba(140,0,255,0.4)]
+              ${
+                isUser
+                  ? "rounded-tr-md max-w-[85%] sm:max-w-[75%] lg:max-w-[65%]"
+                  : "rounded-tl-md border border-purple-900/40"
               }`}
           >
-            
-            {/* Message Content */}
+
+            {/* Copy Button (Bot Only)
+            {isBot && (
+              <button
+                onClick={handleCopy}
+                className="absolute top-2 right-2 opacity-70 hover:opacity-100 transition text-purple-300 hover:text-purple-100"
+                title="Copy message"
+              >
+                <Copy className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Markdown Processing */}
             <div className="w-full overflow-hidden">
-              <div className={`prose prose-sm sm:prose-base max-w-none 
-                ${isUser 
-                  ? "prose-invert [&_*]:text-white [&_code]:bg-white/20 [&_pre]:bg-white/10" 
-                  : "prose-invert [&_*]:text-slate-100 [&_code]:bg-slate-800 [&_pre]:bg-slate-800"
-                }`}>
-                <ReactMarkdown 
+              <div
+                className={`prose prose-sm sm:prose-base max-w-none prose-invert
+                [&_*]:text-purple-200
+                [&_strong]:text-purple-100
+                [&_a]:text-purple-300 hover:[&_a]:text-purple-200
+                [&_li]:marker:text-purple-400
+                `}
+              >
+                <ReactMarkdown
                   components={{
-                  
-                    pre: ({ children, ...props }) => (
-                      <pre 
-                        {...props} 
-                        className={`overflow-x-auto whitespace-pre-wrap break-words rounded-lg p-3 my-3 text-xs sm:text-sm font-mono shadow-inner border
-                          ${isUser
-                            ? "bg-white/10 border-white/20 text-white"
-                            : "bg-slate-800 border-slate-600 text-slate-100"
-                          }`}
-                      >
-                        {children}
-                      </pre>
+                    /* ✅ Code Block with syntax highlighting */
+                    pre: ({ children }) => (
+                      <div className="relative group my-3">
+
+                        {/* Copy button specifically for code */}
+                        <button
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              typeof children === "string"
+                                ? children
+                                : children?.toString() || ""
+                            )
+                          }
+                          className="absolute top-2 right-2 opacity-70 hover:opacity-100 transition text-purple-300 hover:text-purple-100"
+                          title="Copy code"
+                        >
+                          <Copy className="w-4 h-4" />
+                        </button>
+
+                        <pre
+                          className="overflow-x-auto whitespace-pre-wrap break-words rounded-xl p-3
+                          bg-[#0d1117] border border-purple-950/60 shadow-inner
+                          font-mono text-xs sm:text-sm text-purple-200"
+                        >
+                          <code className="hljs">{children}</code>
+                        </pre>
+                      </div>
                     ),
-                    
-          
+
+                    /* ✅ Inline Code */
                     code: ({ children, className, ...props }) => {
-                      const isInline = !className?.includes('language-');
+                      const isInline = !className?.includes("language-");
                       return isInline ? (
-                        <code 
-                          {...props} 
-                          className={`px-1.5 py-0.5 rounded text-xs sm:text-sm font-mono break-all shadow-sm
-                            ${isUser
-                              ? "bg-white/20 text-white border border-white/30"
-                              : "bg-slate-800 text-slate-100 border border-slate-600"
-                            }`}
+                        <code
+                          {...props}
+                          className="px-1.5 py-0.5 rounded font-mono text-xs sm:text-sm
+                          bg-purple-900/40 border border-purple-800 text-purple-200"
                         >
                           {children}
                         </code>
                       ) : (
-                        <code {...props} className="break-all whitespace-pre-wrap font-mono text-xs sm:text-sm">
-                          {children}
-                        </code>
+                        <code {...props} className="hljs">{children}</code>
                       );
                     },
-                    
-                    p: ({ children, ...props }) => (
-                      <p {...props} className="break-words overflow-wrap-anywhere leading-relaxed mb-2 last:mb-0">
+
+                    p: ({ children }) => (
+                      <p className="break-words leading-relaxed mb-2 last:mb-0 text-purple-200">
                         {children}
                       </p>
                     ),
-                    
-                    ul: ({ children, ...props }) => (
-                      <ul {...props} className="space-y-1 ml-4">
-                        {children}
-                      </ul>
+
+                    ul: ({ children }) => (
+                      <ul className="space-y-1 ml-4 text-purple-200">{children}</ul>
                     ),
-                    
-                    ol: ({ children, ...props }) => (
-                      <ol {...props} className="space-y-1 ml-4">
-                        {children}
-                      </ol>
+
+                    ol: ({ children }) => (
+                      <ol className="space-y-1 ml-4 text-purple-200">{children}</ol>
                     ),
-                    
-                    // Enhanced blockquote styling
-                    blockquote: ({ children, ...props }) => (
-                      <blockquote 
-                        {...props} 
-                        className={`border-l-4 pl-4 py-2 my-3 italic rounded-r-lg
-                          ${isUser
-                            ? "border-white/40 bg-white/10"
-                            : "border-slate-500 bg-slate-800/50"
-                          }`}
+
+                    blockquote: ({ children }) => (
+                      <blockquote
+                        className="border-l-4 pl-4 py-2 my-3 italic rounded-r-lg
+                        border-purple-700 bg-purple-950/40 text-purple-300"
                       >
                         {children}
                       </blockquote>
                     ),
-                    
-                    // Enhanced heading styling
-                    h1: ({ children, ...props }) => (
-                      <h1 {...props} className="text-lg sm:text-xl font-bold mb-3 break-words">
-                        {children}
-                      </h1>
+
+                    h1: ({ children }) => (
+                      <h1 className="text-xl font-bold mb-3 text-purple-300">{children}</h1>
                     ),
-                    
-                    h2: ({ children, ...props }) => (
-                      <h2 {...props} className="text-base sm:text-lg font-semibold mb-2 break-words">
-                        {children}
-                      </h2>
+                    h2: ({ children }) => (
+                      <h2 className="text-lg font-semibold mb-2 text-purple-300">{children}</h2>
                     ),
-                    
-                    h3: ({ children, ...props }) => (
-                      <h3 {...props} className="text-sm sm:text-base font-medium mb-2 break-words">
-                        {children}
-                      </h3>
+                    h3: ({ children }) => (
+                      <h3 className="text-base font-medium mb-2 text-purple-200">{children}</h3>
                     ),
                   }}
                 >
@@ -142,34 +169,21 @@ export const MessageBubble = ({ chat }: MessageBubbleProps) => {
                 </ReactMarkdown>
               </div>
             </div>
-            
-            {/* Message Footer */}
-            <div className="flex items-center justify-between mt-3 pt-2 border-t  border-slate-600/50 gap-2">
-              <span
-                className={`text-xs font-medium flex-shrink-0 
-                  ${isUser 
-                    ? "text-blue-100" 
-                    : "text-slate-400"
-                  }`}
-              >
-                {chat.timestamp}
-              </span>
-              
+
+            {/* Footer */}
+            <div className="flex items-center justify-between mt-3 pt-2 border-t border-purple-900/40">
+              <span className="text-xs text-purple-400">{chat.timestamp}</span>
+
               {chat.status === "sending" && (
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <Loader2 className={`w-3 h-3 animate-spin 
-                    ${isUser ? "text-blue-300" : "text-slate-400"}
-                  `} />
-                  <span className={`text-xs 
-                    ${isUser ? "text-blue-100" : "text-slate-400"}
-                  `}>
-                    Sending...
-                  </span>
+                <div className="flex items-center gap-1">
+                  <Loader2 className="w-3 h-3 animate-spin text-purple-300" />
+                  <span className="text-xs text-purple-300">Sending...</span>
                 </div>
               )}
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
