@@ -5,19 +5,34 @@ if (!document.getElementById("my-ai-btn")) {
   const btn = document.createElement("button");
   btn.id = "my-ai-btn";
   btn.innerText = "💡 Copilot";
+Object.assign(btn.style, {
+  position: "fixed",
+  bottom: "20px",
+  right: "20px",
+  zIndex: 10000,
+  padding: "12px 20px",
+  borderRadius: "12px",
+  background: "rgba(103, 58, 183, 0.85)",
+  backdropFilter: "blur(8px)",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+  color: "#fff",
+  fontSize: "15px",
+  fontWeight: "600",
+  border: "1px solid rgba(255,255,255,0.2)",
+  cursor: "pointer",
+  transition: "all 0.25s ease",
+});
 
-  Object.assign(btn.style, {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    zIndex: 10000,
-    padding: "10px 15px",
-    borderRadius: "8px",
-    backgroundColor: "#673ab7",
-    color: "white",
-    border: "none",
-    cursor: "pointer",
-  });
+btn.onmouseover = () => {
+  btn.style.transform = "translateY(-3px)";
+  btn.style.boxShadow = "0 6px 16px rgba(0,0,0,0.28)";
+};
+
+btn.onmouseout = () => {
+  btn.style.transform = "translateY(0)";
+  btn.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+};
+
 
   function extractCode(htmlContent: NodeListOf<Element>) {
     // Extract the text content of each line with the 'view-line' class
